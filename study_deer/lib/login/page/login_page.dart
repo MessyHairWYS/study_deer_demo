@@ -20,6 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   final _pwdController = TextEditingController();
 
   bool _accountFieldEmpty = true;
+  bool _pwdFieldEmpty = true;
   bool _pwdShowable = true;
 
   @override
@@ -93,7 +94,8 @@ class _LoginPageState extends State<LoginPage> {
                             _accountFieldEmpty = true;
                           });
                         },
-                        child: Icon(Icons.clear,size: 20,)),
+                        child: Image.asset('assets/login/qyg_shop_icon_delete.png',height: 20,width: 20,)
+                  ),
 
                   hintText: '请输入账号',
                     // hintStyle: TextStyle(fontSize: 14),
@@ -112,9 +114,15 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
 
-              Gaps.vGap16,
+              Gaps.vGap8,
 
               TextField(
+                onChanged: (value){
+                  setState(() {
+                    _pwdFieldEmpty = _pwdController.text.isEmpty;
+                  });
+                },
+                obscureText:_pwdShowable,
                 controller: _pwdController,
                 keyboardType: TextInputType.visiblePassword,
                 inputFormatters: [
@@ -123,9 +131,22 @@ class _LoginPageState extends State<LoginPage> {
                 // maxLength: 16,
                 // maxLengthEnforced:true,
                 decoration: InputDecoration(
-                  suffix: Image.asset('assets/login/qyg_shop_icon_hide.png'),
-                  // Icon(_pwdShowable ? Icons.remove_red_eye:
-                  // ),
+                    // contentPadding: EdgeInsets.symmetric(vertical: 10),
+                    suffix:Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10,vertical: 0),
+                      // color: Colours.red,
+                      width: 70,
+                      height: 30,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          _pwdFieldEmpty ? SizedBox():_pwdDeleteButton(),
+                          Gaps.hGap10,
+                          _showPwdButton(),
+                        ],
+                      ),
+                    ),
+
                     hintText: '请输入密码',
                     focusedBorder: UnderlineInputBorder(
                         borderSide: BorderSide(
@@ -193,4 +214,38 @@ class _LoginPageState extends State<LoginPage> {
         ),
     );
   }
+
+  _pwdDeleteButton(){
+    return  GestureDetector(
+        onTap: (){
+          setState(() {
+            _pwdController.text = '';
+            _pwdFieldEmpty = true;
+          });
+        },
+        child: Container(
+          width: 20,
+            height: 20,
+            child: Image.asset('assets/login/qyg_shop_icon_delete.png')),
+    );
+  }
+
+  _showPwdButton(){
+    return GestureDetector(
+      onTap: (){
+        setState(() {
+          _pwdShowable = !_pwdShowable;
+        });
+      },
+      child: Image.asset(
+        _pwdShowable ? 'assets/login/qyg_shop_icon_hide.png'
+            :'assets/login/qyg_shop_icon_display.png',
+        fit: BoxFit.fill,
+        width: 20,
+        height: 20,
+      ),
+    );
+  }
+
+
 }
