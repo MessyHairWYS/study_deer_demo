@@ -22,10 +22,52 @@ class _LoginPageState extends State<LoginPage> {
   bool _accountFieldEmpty = true;
   bool _pwdFieldEmpty = true;
   bool _pwdShowable = true;
+  bool _loginClickable = false;
+
+  final _accountFocusNode = FocusNode();
+  final _pwdFocusNode = FocusNode();
+
+
+  ///验证能否登录
+  void _verify(){
+    String account = _accountController.text;
+    String pwd = _pwdController.text;
+
+    bool loginClickable = true;
+
+    if(account.isEmpty || account.length < 11){
+      loginClickable = false;
+    }
+    if(pwd.isEmpty || pwd.length < 6){
+      loginClickable = false;
+    }
+    if(_loginClickable != loginClickable){
+      setState(() {
+        _loginClickable = loginClickable;
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+
+    _accountFocusNode.addListener(() {
+        if(_accountFocusNode.hasFocus){
+          // print('_accountFocusNode 获得焦点');
+        }else{
+          // print('_accountFocusNode 失去焦点');
+        }
+    });
+
+    _pwdFocusNode.addListener(() {
+      if(_pwdFocusNode.hasFocus){
+        // print('_pwdFocusNode 获得焦点');
+      }else{
+        // print('_pwdFocusNode 失去焦点');
+      }
+    });
+
   }
 
 
@@ -68,10 +110,13 @@ class _LoginPageState extends State<LoginPage> {
               ),
 
               TextField(
+                focusNode: _accountFocusNode,
+                autofocus: true,
                 // style: TextStyle(fontSize: 14),
                 onChanged: (value){
                   setState(() {
                     _accountFieldEmpty = _accountController.text.isEmpty;
+                    _verify();
                   });
                 },
 
@@ -92,6 +137,7 @@ class _LoginPageState extends State<LoginPage> {
                           setState(() {
                             _accountController.text = '';
                             _accountFieldEmpty = true;
+                            _verify();
                           });
                         },
                         child: Image.asset('assets/login/qyg_shop_icon_delete.png',height: 20,width: 20,)
@@ -117,9 +163,11 @@ class _LoginPageState extends State<LoginPage> {
               Gaps.vGap8,
 
               TextField(
+                focusNode: _pwdFocusNode,
                 onChanged: (value){
                   setState(() {
                     _pwdFieldEmpty = _pwdController.text.isEmpty;
+                    _verify();
                   });
                 },
                 obscureText:_pwdShowable,
@@ -169,10 +217,25 @@ class _LoginPageState extends State<LoginPage> {
                 height: 44,
                 width: double.infinity,
                 child: FlatButton(
-                    onPressed:(){
+                    textColor: Colors.white,
+                    color:Colours.app_main,
+                    disabledColor: Colours.text_gray_c,
+                    disabledTextColor: Colors.white,
 
-                    },
-                  color: Colors.blue,
+                    onPressed:_loginClickable ? (){
+                      //收回键盘
+                      _accountFocusNode.unfocus();
+                      _pwdFocusNode.unfocus();
+
+                      ///登录
+                      String account = _accountController.text;
+                      String pwd = _pwdController.text;
+
+                      print('login account = $account pwd = $pwd');
+                    }
+                    :null,
+
+                  // color: Colors.blue,
                   child: Text('登录',style: TextStyle(color: Colors.white,fontSize:18),),
                 ),
               ),
@@ -221,6 +284,7 @@ class _LoginPageState extends State<LoginPage> {
           setState(() {
             _pwdController.text = '';
             _pwdFieldEmpty = true;
+            _verify();
           });
         },
         child: Container(
@@ -247,5 +311,12 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  @override
+  void dispose() {
+
+    _accountFocusNode?.dispose();
+    _pwdFocusNode?.dispose();
+    super.dispose();
+  }
 
 }

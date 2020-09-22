@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:study_deer/res/colours.dart';
 import 'package:study_deer/res/gaps.dart';
 import 'package:study_deer/res/styles.dart';
@@ -27,13 +28,27 @@ class _ForgetPwdPageState extends State<ForgetPwdPage> {
   Timer _timer;
   int _countdownTime = 20;
 
+  final _phoneController = TextEditingController();
+  final _pwdController = TextEditingController();
+  final _smsController = TextEditingController();
+
+
+  bool _phoneFieldEmpty = true;
+  bool _pwdFieldEmpty = true;
+  bool _smsFieldEmpty = true;
+
+  bool _doneClickable = false;
+
+  _verify(){
+
+  }
+
   @override
   void initState() {
     _registerRecognizer.onTap = (){
       print('_registerRecognizer tap');
     };
     super.initState();
-
   }
 
   @override
@@ -86,8 +101,22 @@ class _ForgetPwdPageState extends State<ForgetPwdPage> {
               ),
             ),
             TextField(
+              onChanged: (value){
+                setState(() {
+                  _phoneFieldEmpty = _phoneController.text.isEmpty;
+                  _verify();
+                });
+              },
+
+              controller: _phoneController,
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(11),
+                WhitelistingTextInputFormatter.digitsOnly,
+              ],
               keyboardType:TextInputType.number,
               decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(vertical: 8),
+                suffix: _phoneFieldEmpty ? null:_phoneDeleteButton(),
                   hintText: '请输入手机号',
                   focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(
@@ -109,6 +138,16 @@ class _ForgetPwdPageState extends State<ForgetPwdPage> {
             Stack(
               children: [
                 TextField(
+                  onChanged: (value){
+                    setState(() {
+                      _verify();
+                    });
+                  },
+                  controller: _smsController,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(6),
+                    WhitelistingTextInputFormatter.digitsOnly,
+                  ],
                   decoration: InputDecoration(
                       hintText: '请输入验证码',
                       focusedBorder: UnderlineInputBorder(
@@ -159,11 +198,23 @@ class _ForgetPwdPageState extends State<ForgetPwdPage> {
               ],
             ),
 
-            Gaps.vGap16,
+            Gaps.vGap10,
 
 
             TextField(
+              onChanged: (value){
+                setState(() {
+                  _pwdFieldEmpty = _pwdController.text.isEmpty;
+                  _verify();
+                });
+              },
+              controller: _pwdController,
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(16)
+              ],
               decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(vertical: 10),
+                suffix: _pwdFieldEmpty ? null : _pwdDeleteButton(),
                   hintText: '请输入密码',
                   focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(
@@ -186,11 +237,19 @@ class _ForgetPwdPageState extends State<ForgetPwdPage> {
               height: 44,
               width: double.infinity,
               child: FlatButton(
-                // highlightColor:Colorss.transparent,
-                onPressed:(){
-
-                },
                 color: Colors.blue,
+                textColor: Colors.white,
+                disabledColor: Colors.grey,
+                disabledTextColor: Colors.white,
+
+                onPressed:_doneClickable ? (){
+                  String phone = _phoneController.text;
+                  String sms = _smsController.text;
+                  String pwd = _pwdController.text;
+                  print('phone=$phone sms=$sms pwd = $pwd');
+
+                }:null,
+
                 child: Text('确认',style: TextStyle(color: Colors.white,fontSize:18),),
               ),
             ),
@@ -198,6 +257,40 @@ class _ForgetPwdPageState extends State<ForgetPwdPage> {
           ],
         ),
       ),
+    );
+  }
+
+
+
+  _phoneDeleteButton(){
+    return  GestureDetector(
+      onTap: (){
+        setState(() {
+          _phoneController.text = '';
+          _phoneFieldEmpty = true;
+          _verify();
+        });
+      },
+      child: Container(
+          width: 20,
+          height: 20,
+          child: Image.asset('assets/login/qyg_shop_icon_delete.png')),
+    );
+  }
+
+  _pwdDeleteButton(){
+    return  GestureDetector(
+      onTap: (){
+        setState(() {
+          _pwdController.text = '';
+          _pwdFieldEmpty = true;
+          _verify();
+        });
+      },
+      child: Container(
+          width: 20,
+          height: 20,
+          child: Image.asset('assets/login/qyg_shop_icon_delete.png')),
     );
   }
 
@@ -211,4 +304,3 @@ class _ForgetPwdPageState extends State<ForgetPwdPage> {
     super.dispose();
   }
 }
-

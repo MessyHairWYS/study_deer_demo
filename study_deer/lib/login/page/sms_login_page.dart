@@ -3,6 +3,8 @@ import 'dart:async';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:study_deer/login/page/forget_pwd_page.dart';
 import 'package:study_deer/res/colours.dart';
 import 'package:study_deer/res/gaps.dart';
 import 'package:study_deer/res/styles.dart';
@@ -20,17 +22,40 @@ class SMSLoginPage extends StatefulWidget {
 class _SMSLoginPageState extends State<SMSLoginPage> {
 
   final TapGestureRecognizer _registerRecognizer = TapGestureRecognizer();
-
   bool _smsClickable = true;
 
   //定义计时变量
   Timer _timer;
   int _countdownTime = 20;
 
+  final _phoneTextController = TextEditingController();
+  final _smsTextController = TextEditingController();
+  bool _phoneEmpty = true;
+  bool _smsEmpty = true;
+
+
+  bool _loginClickable = false;
+
+
+  _verify(){
+      String phone = _phoneTextController.text;
+      String sms = _smsTextController.text;
+      bool loginClickable = true;
+
+      if(phone.isEmpty || phone.length < 11){
+        loginClickable = false;
+      }
+      if(sms.isEmpty || sms.length < 6){
+        loginClickable = false;
+      }
+      if(_loginClickable != loginClickable){
+        _loginClickable = loginClickable;
+      }
+  }
+
   @override
   void initState() {
     _registerRecognizer.onTap = (){
-      // print('_registerRecognizer tap');
       Navigator.of(context).push(
           MaterialPageRoute(
               builder: (_)=>RegisterPage()
@@ -38,7 +63,6 @@ class _SMSLoginPageState extends State<SMSLoginPage> {
       );
     };
     super.initState();
-
   }
 
   @override
@@ -62,7 +86,7 @@ class _SMSLoginPageState extends State<SMSLoginPage> {
           _timer?.cancel();
           _smsClickable = true;
           _countdownTime = 20;
-          print('恢复成功');
+          // print('恢复成功');
 
 
         }else{
@@ -83,6 +107,7 @@ class _SMSLoginPageState extends State<SMSLoginPage> {
         child: Column(
           children: [
             Container(
+              // color: Colors.yellow,
               padding: EdgeInsets.symmetric(vertical: 12),
               alignment: Alignment.centerLeft,
               child: Text(
@@ -90,9 +115,23 @@ class _SMSLoginPageState extends State<SMSLoginPage> {
                 style: TextStyles.textBold24,
               ),
             ),
+
             TextField(
+              onChanged: (value){
+                setState(() {
+                  _phoneEmpty = _phoneTextController.text.isEmpty;
+                  _verify();
+                });
+              },
+              controller: _phoneTextController,
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(11),
+                WhitelistingTextInputFormatter.digitsOnly,
+              ],
               keyboardType:TextInputType.number,
               decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(vertical: 10),
+                  suffix: _phoneEmpty ? null : _phoneDeleteButton(),
                   hintText: '请输入手机号',
                   focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(
@@ -114,6 +153,18 @@ class _SMSLoginPageState extends State<SMSLoginPage> {
             Stack(
               children: [
                 TextField(
+                  onChanged: (value){
+                    setState(() {
+                      _smsEmpty = _smsTextController.text.isEmpty;
+                      _verify();
+                    });
+                  },
+                  controller: _smsTextController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(6),
+                    WhitelistingTextInputFormatter.digitsOnly,
+                  ],
                   decoration: InputDecoration(
                       hintText: '请输入验证码',
                       focusedBorder: UnderlineInputBorder(
@@ -194,11 +245,19 @@ class _SMSLoginPageState extends State<SMSLoginPage> {
               height: 44,
               width: double.infinity,
               child: FlatButton(
-                  // highlightColor:Colorss.transparent,
-                onPressed:(){
+                color: Colours.app_main,
+                disabledColor: Colours.text_gray_c,
+                disabledTextColor: Colors.white,
 
-                },
-                color: Colors.blue,
+                onPressed:_loginClickable ? (){
+
+                  String phone = _phoneTextController.text;
+                  String sms = _smsTextController.text;
+
+                  print('login phone =$phone,sms =$sms');
+
+                }:null,
+                // color: Colors.blue,
                 child: Text('登录',style: TextStyle(color: Colors.white,fontSize:18),),
               ),
             ),
@@ -206,7 +265,13 @@ class _SMSLoginPageState extends State<SMSLoginPage> {
 
             GestureDetector(
               onTap: (){
-                print('GestureDetector');
+                // print('GestureDetector');
+
+                Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_)=>ForgetPwdPage(),
+                    ),
+                );
               },
               child: Container(
                   alignment: Alignment.centerRight,
@@ -219,6 +284,26 @@ class _SMSLoginPageState extends State<SMSLoginPage> {
       ),
     );
   }
+
+
+  _phoneDeleteButton(){
+    return  GestureDetector(
+      onTap: (){
+        setState(() {
+          _phoneTextController.text = '';
+          _phoneEmpty = true;
+          _verify();
+        });
+      },
+      child: Container(
+        // padding: EdgeInsets.symmetric(vertical: 10),
+        // color: Colors.red,
+          width: 20,
+          height: 20,
+          child: Image.asset('assets/login/qyg_shop_icon_delete.png')),
+    );
+  }
+
 
   @override
   void dispose() {

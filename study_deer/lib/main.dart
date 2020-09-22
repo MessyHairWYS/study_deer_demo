@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:study_deer/main_page.dart';
 
 import 'login/page/login_page.dart';
 
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: LoginPage(),
+      home: MainPage(),
     );
   }
 }
