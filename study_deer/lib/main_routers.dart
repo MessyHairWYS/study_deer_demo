@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:study_deer/main_page.dart';
 
-class HYRouter {
+class KSDRouter {
   static final String initialRoute = MainPage.routeName;
 
   static final Map<String, WidgetBuilder> routes = {
@@ -18,3 +18,4 @@ class HYRouter {
     return null;
   };
 }
+
