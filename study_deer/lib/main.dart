@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:study_deer/main_page.dart';
-
-import 'login/page/login_page.dart';
+import 'main_routers.dart';
 
 void main() {
   runApp(MyApp());
@@ -21,8 +19,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MainPage(),
-
+      // home: MainPage(),
+      routes: KSDRouter.routes,
+      initialRoute: KSDRouter.initialRoute,
+      onUnknownRoute: KSDRouter.unknownRoute,
       // onGenerateInitialRoutes: [],
     );
   }

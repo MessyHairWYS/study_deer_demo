@@ -7,7 +7,8 @@ import 'shops/shops_page.dart';
 import 'statistics/statistics_page.dart';
 
 class MainPage extends StatefulWidget {
-  static const routeName = '/';
+  static const String routeName = '/';
+
   @override
   _MainPageState createState() => _MainPageState();
 }
