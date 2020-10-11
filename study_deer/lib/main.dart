@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
   final String f = 'ffffffffff';
   final String g = 'gggggggggg';
 
+  final String c = 'ccccc';
 
 
   @override
