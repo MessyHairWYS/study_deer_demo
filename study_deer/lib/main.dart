@@ -13,10 +13,15 @@ void main() {
 ///
 ///
 class MyApp extends StatelessWidget {
+
+  final String a = 'aaaaa';
+  final String b = 'bbbbb';
+
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'deer_study',
+      title: 'deer_study_aaaaaa',
       theme: ThemeData(
         backgroundColor: Colors.white,
         // splashColor: Colors.transparent, // 点击时的高亮效果设置为透明
